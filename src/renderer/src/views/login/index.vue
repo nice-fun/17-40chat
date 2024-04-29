@@ -52,6 +52,7 @@
 import { reactive, ref } from 'vue'
 import { login } from '@renderer/api/login';
 const message = ref('')
+const result = ref('')
 const handleSendMessage = async () => {
     const res = await login({
         messages: [
@@ -63,8 +64,26 @@ const handleSendMessage = async () => {
         model: "model-6b",
         stream: true
     })
-    console.log(res.data)
+
+
+    const str = res.data;
+    const results = matchAllBetweenSingleQuotes(str);
+    console.log(results); // ["John", "25", "USA"]
+
 }
+
+const matchAllBetweenSingleQuotes = (str) => {
+    const regex = /content='([^']*)'/g;
+    let match;
+    const matches = [];
+    while ((match = regex.exec(str))) {
+        matches.push(match[1]); // 第一个括号中的内容
+    }
+    return matches;
+}
+
+
+
 </script>
 
 <style lang="scss" scoped>
