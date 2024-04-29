@@ -51,25 +51,45 @@ const load = () => {
 const store = useStore()
 const message = ref('')
 const result = ref([])
+const isDisabled = ref(false)
 
 const handleSendMessage = async () => {
-    const res = await login({
-        messages: [
-            {
-                role: "user",
-                content: message.value
-            }
-        ],
-        model: "model-6b",
-        stream: true
-    })
+    isDisabled.value = true
+    if (message.value !== '') {
+        const res = await login({
+            messages: [
+                {
+                    role: "user",
+                    content: message.value
+                }
+            ],
+            model: "model-6b",
+            stream: true
+        })
+        if (res.status === 200) {
+            const str = res.data;
+            const results = matchAllBetweenSingleQuotes(str);
+            console.log(results);
+            result.value = results;
+            store.zhangsanData.list.push({
+                time: new Date().toLocaleString(),
+                data: message.value,
+                require: results
+            })
+
+
+        } else {
+            return
+        }
+
+    } else {
+        window.alert('禁止为空')
+    }
 
 
 
-    const str = res.data;
-    const results = matchAllBetweenSingleQuotes(str);
-    console.log(results);
-    result.value = results;
+
+
 
 }
 
@@ -83,11 +103,6 @@ const matchAllBetweenSingleQuotes = (str) => {
     return matches;
 }
 
-const timer = () => {
-    const now = new Date();
-    const currentDate = now.toISOString().split('T')[0];
-    console.log(currentDate); // 输出格式: YYYY-MM-DD 
-}
 
 
 
