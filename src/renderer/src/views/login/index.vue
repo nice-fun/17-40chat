@@ -4,43 +4,35 @@
             <div class="header-left">AI工具</div>
             <div class="header-right"><span style="margin-right: 50px;"><img style="width: 40px;height: 40px;"
                         src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" alt=""></span><span
-                    style="  color: black;">username</span>
+                    style="  color: black;">{{ store.zhangsanData.username }}</span>
             </div>
         </div>
         <div class="body">
             <div class="left box">
                 <div class="left-body">
-                    <div class="left-card">
-                        <div>今日</div>
-                        <div>今天晚上吃什么</div>
-                    </div>
-                    <div class="left-card">
-                        <div>今日</div>
-                        <div>今天晚上吃什么</div>
-                    </div>
-                    <div class="left-card">
-                        <div>今日</div>
-                        <div>今天晚上吃什么</div>
-                    </div>
-                    <div class="left-card">
-                        <div>今日</div>
-                        <div>今天晚上吃什么</div>
-                    </div>
-                    <div class="left-card">
-                        <div>今日</div>
-                        <div>今天晚上吃什么</div>
-                    </div>
+
+                    <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+                        <li v-for="(item, index) in store.zhangsanData.list" :key="index" class="infinite-list-item">
+
+                            <div class="card-body">
+                                <div class="time">{{ item.time }}</div>
+
+                                <div class="dataText">提问:{{ item.data.slice(0, 10) }}</div>
+
+
+                            </div>
+
+                        </li>
+                    </ul>
 
                 </div>
-
-
             </div>
             <div class="center box"><el-input v-model="message" style="width: 100%;height: 450px;" type="textarea"
                     placeholder="Please input" />
                 <el-button class="btn" type="primary" @click="handleSendMessage">发送</el-button>
             </div>
             <div class="right box">
-                <div class="right-body"> <el-input v-model="message" style="width: 100%;height: 500px;" type="textarea"
+                <div class="right-body"> <el-input v-model="result" style="width: 100%;height: 500px;" type="textarea"
                         placeholder="总结内容" /></div>
 
             </div>
@@ -51,8 +43,15 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { login } from '@renderer/api/login';
+import { useStore } from "@store";
+const count = ref(0)
+const load = () => {
+    count.value += 2
+}
+const store = useStore()
 const message = ref('')
-const result = ref('')
+const result = ref([])
+
 const handleSendMessage = async () => {
     const res = await login({
         messages: [
@@ -66,9 +65,11 @@ const handleSendMessage = async () => {
     })
 
 
+
     const str = res.data;
     const results = matchAllBetweenSingleQuotes(str);
-    console.log(results); // ["John", "25", "USA"]
+    console.log(results);
+    result.value = results;
 
 }
 
@@ -77,9 +78,15 @@ const matchAllBetweenSingleQuotes = (str) => {
     let match;
     const matches = [];
     while ((match = regex.exec(str))) {
-        matches.push(match[1]); // 第一个括号中的内容
+        matches.push(match[1]);
     }
     return matches;
+}
+
+const timer = () => {
+    const now = new Date();
+    const currentDate = now.toISOString().split('T')[0];
+    console.log(currentDate); // 输出格式: YYYY-MM-DD 
 }
 
 
@@ -90,7 +97,6 @@ const matchAllBetweenSingleQuotes = (str) => {
 .test {
     width: 100vw;
     margin: 50px;
-    box-sizing: border-box;
 
 
     .header {
@@ -140,13 +146,61 @@ const matchAllBetweenSingleQuotes = (str) => {
                 height: 100%;
                 width: 90%;
 
-                .left-card {
-                    line-height: 40px;
-                    margin: 5px 0;
-                    border-radius: 10% 10% 10% 10%;
-
-                    background-color: rgb(255, 252, 248);
+                .infinite-list {
+                    width: 100%;
+                    height: 500px;
+                    padding: 0;
+                    margin: 0;
+                    list-style: none;
                 }
+
+                .infinite-list .infinite-list-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100px;
+
+                    background: var(--el-color-primary-light-9);
+                    margin: 10px;
+                    color: var(--el-color-primary);
+                }
+
+                .infinite-list .infinite-list-item+.list-item {
+                    margin-top: 10px;
+                }
+
+                .infinite-list-item {
+                    ::v-deep(.el-card__body) {
+                        width: 100%;
+                        height: 100%;
+                        margin: 0;
+                        padding: 0;
+                    }
+
+                    .card-body {
+                        width: 100%;
+                        height: 100%;
+
+
+
+                        .time {
+                            width: 100%;
+                            line-height: 20px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: left;
+                        }
+
+                        .dataText {
+                            width: 100%;
+
+
+                        }
+                    }
+
+                }
+
+
             }
         }
 
