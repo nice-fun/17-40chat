@@ -3,7 +3,10 @@ const request = axios.create({
     baseURL: "/api",
 })
 
+
+
 request.interceptors.request.use(function (config) {
+  
     return config;
 }, function (error) {
     return Promise.reject(error);

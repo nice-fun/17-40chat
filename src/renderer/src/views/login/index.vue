@@ -51,11 +51,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { login } from '@renderer/api/login';
-
-
-
 const message = ref('')
-
 const handleSendMessage = async () => {
     const res = await login({
         messages: [
@@ -64,21 +60,18 @@ const handleSendMessage = async () => {
                 content: message.value
             }
         ],
-        model: "model-6b/model-100b",
+        model: "model-6b",
         stream: true
     })
-    console.log(res)
+    console.log(res.data)
 }
-
-
-
-
 </script>
 
 <style lang="scss" scoped>
 .test {
     width: 100vw;
     margin: 50px;
+    box-sizing: border-box;
 
 
     .header {
