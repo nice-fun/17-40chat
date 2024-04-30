@@ -52,7 +52,7 @@
             </div>
             <div class="right box">
                 <div class="right-body">
-                    <el-input v-model="result" v-loading="loading" class="inputTextArea" id="inputText"
+                    <el-input v-loading="loading" class="inputTextArea" id="inputText"
                         style="width: 100%;height: 500px;" type="textarea" placeholder="总结内容" />
                 </div>
             </div>
@@ -78,12 +78,9 @@ const count = ref(0)
 const load = () => {
     count.value += 2
 }
-
 const message = ref('')
-const result = ref('')
 const isDisabled = ref(false)
 const radio1 = ref('zhangsanData')
-
 const i = ref(0)
 /**
 
@@ -168,7 +165,7 @@ const matchAllBetweenSingleQuotes = (str) => {
     return matches;
 }
 const handleDel = (index) => {
-    nowUser.list.splice(index, 1)
+    nowUser.value.list.splice(index, 1)
 }
 const dialogVisible = ref(false)
 
