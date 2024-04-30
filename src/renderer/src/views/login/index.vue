@@ -82,6 +82,7 @@ const message = ref('')
 const isDisabled = ref(false)
 const radio1 = ref('zhangsanData')
 const i = ref(0)
+let messageText = ''
 /**
 
 const intervalId = setInterval((results) => {
@@ -96,7 +97,8 @@ const intervalId = setInterval((results) => {
 
 const handleSendMessage = async () => {
     isDisabled.value = true
-
+    messageText = ''
+    document.getElementById('inputText').innerHTML = messageText;
     if (message.value !== '') {
         loading.value = true
         const res = await login({
@@ -110,7 +112,6 @@ const handleSendMessage = async () => {
             stream: true
         })
         if (res.status === 200) {
-
             loading.value = false
             const str = res.data;
             const results: Array<never> = matchAllBetweenSingleQuotes(str);
@@ -129,15 +130,18 @@ const handleSendMessage = async () => {
                     i.value++
 
                     const element = strin.charAt(i.value) as never;
-                    document.getElementById("inputText")?.append(element);
+                    messageText += element;
+                    document.getElementById('inputText').innerHTML = messageText;
 
 
                     if (i.value === strin.length - 1) {
                         clearInterval(intervalId);
+                        i.value = 0
                     }
 
                 } else {
                     clearInterval(intervalId);
+                    i.value = 0
                 }
             }, 100);
 
