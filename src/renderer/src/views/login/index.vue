@@ -110,6 +110,7 @@ const handleSendMessage = async () => {
             stream: true
         })
         if (res.status === 200) {
+
             loading.value = false
             const str = res.data;
             const results: Array<never> = matchAllBetweenSingleQuotes(str);
@@ -121,21 +122,22 @@ const handleSendMessage = async () => {
 
 
             const intervalId = setInterval(() => {
+                console.log("11111")
+
 
                 if (strin.length > 0) {
                     i.value++
 
-                    const element = strin.charAt(i.value) as never; // 从源数组中取出第一个元素，并将其转换为 never 类型的数组元素
+                    const element = strin.charAt(i.value) as never;
                     document.getElementById("inputText")?.append(element);
 
 
                     if (i.value === strin.length - 1) {
-                        clearInterval(intervalId); // 如果源数组为空，则停止定时器
-
+                        clearInterval(intervalId);
                     }
 
                 } else {
-                    clearInterval(intervalId); // 如果源数组为空，则停止定时器
+                    clearInterval(intervalId);
                 }
             }, 100);
 
@@ -162,7 +164,7 @@ const matchAllBetweenSingleQuotes = (str) => {
     const matches: Array = [];
     while ((match = regex.exec(str))) {
 
-        matches.push(match[1].replace(/\\n/g, '\n').replace(/\n/g, '\n').replace(/-/g, '\n'))
+        matches.push(match[1].replace(/\\n/g, '\n').replace(/\n/g, ' ').replace(/-/g, '\n'))
 
     }
     return matches;
