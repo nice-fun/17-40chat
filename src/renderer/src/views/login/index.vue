@@ -2,56 +2,85 @@
     <div class="test">
         <div class="header">
             <div class="header-left">AI工具</div>
-            <div class="header-right"><span style="margin-right: 50px;"><img style="width: 40px;height: 40px;"
-                        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" alt=""></span><span
-                    style="  color: black;">{{ store.zhangsanData.username }}</span>
+            <div class="header-right">
+                <span style="margin-right: 50px;"><img style="width: 40px;height: 40px;"
+                        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" alt=""></span>
+                <span style="  color: black;">
+                    <el-button plain @click="dialogVisible = true">
+                        {{ nowUser.username }}
+                    </el-button>
+                    <el-dialog v-model="dialogVisible" title="更改用户" width="500" :before-close="handleClose">
+                        <span> <el-radio-group v-model="radio1" size="large">
+                                <el-radio-button v-for="item in store.$state" :label="`${item.username}`"
+                                    :value="`${item.$id}`" />
+
+                            </el-radio-group></span>
+                        <template #footer>
+                            <div class="dialog-footer">
+                                <el-button @click="dialogVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click="dialogVisible = false, changeUser(radio1)">
+                                    Confirm
+                                </el-button>
+                            </div>
+                        </template>
+                    </el-dialog>
+
+                </span>
             </div>
         </div>
         <div class="body">
             <div class="left box">
                 <div class="left-body">
-
                     <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-                        <li v-for="(item, index) in store.zhangsanData.list" :key="index" class="infinite-list-item">
-
+                        <li v-for="(item, index) in nowUser.list" :key="index" class="infinite-list-item">
                             <div class="card-body">
                                 <div class="time">{{ item.time }}</div>
-
                                 <div class="dataText">提问:{{ item.data.slice(0, 10) }}</div>
-
-
+                                <div>
+                                    <el-button style="float: right; margin-right: 10px" type="danger" :icon="Delete"
+                                        @click="handleDel(index)" circle />
+                                </div>
                             </div>
-
                         </li>
                     </ul>
-
                 </div>
             </div>
-            <div class="center box"><el-input v-model="message" style="width: 100%;height: 450px;" type="textarea"
+            <div class="center box">
+                <el-input v-model="message" style="width: 100%;height: 450px;" type="textarea"
                     placeholder="Please input" />
                 <el-button class="btn" type="primary" @click="handleSendMessage">发送</el-button>
             </div>
             <div class="right box">
-                <div class="right-body"> <el-input v-model="result" style="width: 100%;height: 500px;" type="textarea"
-                        placeholder="总结内容" /></div>
-
+                <div class="right-body">
+                    <el-input v-model="result" style="width: 100%;height: 500px;" type="textarea" placeholder="总结内容" />
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { login } from '@renderer/api/login';
 import { useStore } from "@store";
+import {
+    Delete,
+} from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
+onMounted(() => {
+    console.log(nowUser)
+})
+const store = useStore()
+const nowUser = ref(store.zhangsanData)
 const count = ref(0)
 const load = () => {
     count.value += 2
 }
-const store = useStore()
+
 const message = ref('')
 const result = ref([])
 const isDisabled = ref(false)
+const radio1 = ref('zhangsanData')
 
 const handleSendMessage = async () => {
     isDisabled.value = true
@@ -71,7 +100,7 @@ const handleSendMessage = async () => {
             const results = matchAllBetweenSingleQuotes(str);
             console.log(results);
             result.value = results;
-            store.zhangsanData.list.push({
+            nowUser.value.list.unshift({
                 time: new Date().toLocaleString(),
                 data: message.value,
                 require: results
@@ -85,12 +114,6 @@ const handleSendMessage = async () => {
     } else {
         window.alert('禁止为空')
     }
-
-
-
-
-
-
 }
 
 const matchAllBetweenSingleQuotes = (str) => {
@@ -102,8 +125,31 @@ const matchAllBetweenSingleQuotes = (str) => {
     }
     return matches;
 }
+const handleDel = (index) => {
+    nowUser.list.splice(index, 1)
+}
+const dialogVisible = ref(false)
 
-
+const handleClose = (done: () => void) => {
+    ElMessageBox.confirm('Are you sure to close this dialog?')
+        .then(() => {
+            done()
+        })
+        .catch(() => {
+            // catch error
+        })
+}
+const changeUser = (user) => {
+    if (user === 'zhangsanData') {
+        nowUser.value = store.zhangsanData
+    } else if (user === 'lisiData') {
+        nowUser.value = store.lisiData
+    } else if (user === 'wangwuData') {
+        nowUser.value = store.wangwuData
+    } else {
+        return
+    }
+}
 
 
 </script>
@@ -220,7 +266,12 @@ const matchAllBetweenSingleQuotes = (str) => {
         }
 
         .center {
-            flex-grow: 1;
+            flex-grow: 3;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
 
             ::v-deep(.el-textarea__inner) {
                 height: 100%;

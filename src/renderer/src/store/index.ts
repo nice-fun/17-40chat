@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
-import { userZhangSan } from "./useZhangSanData";
-import { userLiSi } from "./useLiSiData";
+import { zhangsanData } from "./useZhangSanData";
+import { lisiData } from "./useLiSiData";
 
 export const useStore = defineStore('store', {
     state: () => {
        return {
-           zhangsanData: userZhangSan(),
-           lisiData: userLiSi()
+           zhangsanData: zhangsanData(),
+           lisiData: lisiData()
        }
     },
     getters: {

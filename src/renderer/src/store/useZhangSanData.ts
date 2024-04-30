@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-export const userZhangSan = defineStore('userZhangSan', {
+export const zhangsanData = defineStore('zhangsanData', {
     state: () => {
        return {
            username: "张三",
