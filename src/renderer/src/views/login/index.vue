@@ -52,7 +52,8 @@
             </div>
             <div class="right box">
                 <div class="right-body">
-                    <el-input v-model="result" style="width: 100%;height: 500px;" type="textarea" placeholder="总结内容" />
+                    <el-input v-model="result" v-loading="loading" class="inputTextArea" id="inputText"
+                        style="width: 100%;height: 500px;" type="textarea" placeholder="总结内容" />
                 </div>
             </div>
         </div>
@@ -70,6 +71,7 @@ import { ElMessageBox } from 'element-plus'
 onMounted(() => {
     console.log(nowUser)
 })
+const loading = ref(false)
 const store = useStore()
 const nowUser = ref(store.zhangsanData)
 const count = ref(0)
@@ -78,13 +80,28 @@ const load = () => {
 }
 
 const message = ref('')
-const result = ref([])
+const result = ref('')
 const isDisabled = ref(false)
 const radio1 = ref('zhangsanData')
 
+const i = ref(0)
+/**
+
+const intervalId = setInterval((results) => {
+    if (results.length > 0) {
+        var element = results.shift(); // 从源数组中取出第一个元素
+        result.value.push(element as never); // 将元素添加到目标数组中
+    } else {
+        clearInterval(intervalId); // 如果源数组为空，则停止定时器
+    }
+}, 100); // 每隔1000毫秒执行一次
+ */
+
 const handleSendMessage = async () => {
     isDisabled.value = true
+
     if (message.value !== '') {
+        loading.value = true
         const res = await login({
             messages: [
                 {
@@ -96,10 +113,35 @@ const handleSendMessage = async () => {
             stream: true
         })
         if (res.status === 200) {
+            loading.value = false
             const str = res.data;
-            const results = matchAllBetweenSingleQuotes(str);
+            const results: Array<never> = matchAllBetweenSingleQuotes(str);
+            const strin = results.join('');
+            console.log("strin", strin.length);
             console.log(results);
-            result.value = results;
+
+            console.log(results.length);
+
+
+            const intervalId = setInterval(() => {
+
+                if (strin.length > 0) {
+                    i.value++
+
+                    const element = strin.charAt(i.value) as never; // 从源数组中取出第一个元素，并将其转换为 never 类型的数组元素
+                    document.getElementById("inputText")?.append(element);
+                    if (i.value === strin.length - 1) {
+                        clearInterval(intervalId); // 如果源数组为空，则停止定时器
+
+                    }
+
+
+                } else {
+                    clearInterval(intervalId); // 如果源数组为空，则停止定时器
+                }
+            }, 100);
+
+
             nowUser.value.list.unshift({
                 time: new Date().toLocaleString(),
                 data: message.value,
