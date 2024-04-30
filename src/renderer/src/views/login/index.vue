@@ -132,7 +132,6 @@ const handleSendMessage = async () => {
 
                     }
 
-
                 } else {
                     clearInterval(intervalId); // 如果源数组为空，则停止定时器
                 }
