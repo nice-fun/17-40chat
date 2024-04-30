@@ -46,9 +46,9 @@
                 </div>
             </div>
             <div class="center box">
-                <el-input v-model="message" style="width: 100%;height: 450px;" type="textarea"
+                <el-input :disabled="loading" v-model="message" style="width: 100%;height: 450px;" type="textarea"
                     placeholder="Please input" />
-                <el-button class="btn" type="primary" @click="handleSendMessage">发送</el-button>
+                <el-button :disabled="loading" class="btn" type="primary" @click="handleSendMessage">发送</el-button>
             </div>
             <div class="right box">
                 <div class="right-body">
@@ -127,6 +127,8 @@ const handleSendMessage = async () => {
 
                     const element = strin.charAt(i.value) as never; // 从源数组中取出第一个元素，并将其转换为 never 类型的数组元素
                     document.getElementById("inputText")?.append(element);
+
+
                     if (i.value === strin.length - 1) {
                         clearInterval(intervalId); // 如果源数组为空，则停止定时器
 
@@ -157,9 +159,11 @@ const handleSendMessage = async () => {
 const matchAllBetweenSingleQuotes = (str) => {
     const regex = /content='([^']*)'/g;
     let match;
-    const matches = [];
+    const matches: Array = [];
     while ((match = regex.exec(str))) {
-        matches.push(match[1]);
+
+        matches.push(match[1].replace(/\\n/g, '\n').replace(/\n/g, '\n').replace(/-/g, '\n'))
+
     }
     return matches;
 }
