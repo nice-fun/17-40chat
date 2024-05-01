@@ -90,6 +90,7 @@ const radio1 = ref('zhangsanData')
 const i = ref(0)
 let messageText = ''
 const isCopy = ref(true)
+let timer: NodeJS.Timeout;
 /**
 
 const intervalId = setInterval((results) => {
@@ -130,7 +131,7 @@ const handleSendMessage = async () => {
             console.log(results.length);
 
 
-            const intervalId = setInterval(() => {
+            timer = setInterval(() => {
                 console.log("11111")
 
 
@@ -143,14 +144,14 @@ const handleSendMessage = async () => {
 
 
                     if (i.value === strin.length - 1) {
-                        clearInterval(intervalId);
+                        clearInterval(timer);
                         isCopy.value = false;
                         i.value = 0
 
                     }
 
                 } else {
-                    clearInterval(intervalId);
+                    clearInterval(timer);
                     isCopy.value = false;
                     i.value = 0
                 }
@@ -173,7 +174,7 @@ const handleSendMessage = async () => {
     }
 }
 const stopInterval = () => {
-    clearInterval(intervalId);
+    clearInterval(timer);
     isCopy.value = false;
     i.value = 0
 
