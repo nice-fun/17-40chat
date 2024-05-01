@@ -265,7 +265,8 @@ const changeUser = (user) => {
 .box-common {
     justify-content: space-between;
     flex-direction: column;
-    background-color: rgb(0, 0, 0);
+    background-color: transparent;
+
 }
 
 .test {
@@ -285,7 +286,7 @@ const changeUser = (user) => {
         .header-left {
 
             height: 100%;
-            color: black;
+
             display: flex;
             align-items: center;
             justify-content: center;
