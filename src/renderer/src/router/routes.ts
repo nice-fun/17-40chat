@@ -5,12 +5,12 @@ export const AppRoutes = [
         //     component: () => import("../views/login/index.vue")
         // },
            {
-            path: "/",
+            path: "/Login",
             name: "首页",
             component: () => import("@views/Login/index.vue")
         },
               {
-            path: "/about",
+            path: "/",
             name: "关于我们",
             component: () => import("@views/About/index.vue")
         },
