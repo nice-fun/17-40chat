@@ -49,11 +49,16 @@
                 <el-input :disabled="loading" v-model="message" style="width: 100%;height: 450px;" type="textarea"
                     placeholder="Please input" />
                 <el-button :disabled="loading" class="btn" type="primary" @click="handleSendMessage">发送</el-button>
+
             </div>
             <div class="right box">
                 <div class="right-body">
                     <el-input v-loading="loading" class="inputTextArea" id="inputText"
-                        style="width: 100%;height: 500px;" type="textarea" placeholder="总结内容" />
+                        style="width: 100%;height: 450px;" type="textarea" placeholder="总结内容" />
+                    <el-button :disabled="isCopy" v-if="!isCopy" class="btn" type="primary"
+                        @click="copyToClipboard">一键复制</el-button>
+                    <el-button :disabled="loading" v-if="isCopy" class="btn" type="primary"
+                        @click="stopInterval">终止生成</el-button>
                 </div>
             </div>
         </div>
@@ -71,6 +76,7 @@ import { ElMessageBox } from 'element-plus'
 onMounted(() => {
     console.log(nowUser)
 })
+
 const loading = ref(false)
 const store = useStore()
 const nowUser = ref(store.zhangsanData)
@@ -83,6 +89,7 @@ const isDisabled = ref(false)
 const radio1 = ref('zhangsanData')
 const i = ref(0)
 let messageText = ''
+const isCopy = ref(true)
 /**
 
 const intervalId = setInterval((results) => {
@@ -100,6 +107,7 @@ const handleSendMessage = async () => {
     messageText = ''
     document.getElementById('inputText').innerHTML = messageText;
     if (message.value !== '') {
+        isCopy.value = true
         loading.value = true
         const res = await login({
             messages: [
@@ -136,11 +144,14 @@ const handleSendMessage = async () => {
 
                     if (i.value === strin.length - 1) {
                         clearInterval(intervalId);
+                        isCopy.value = false;
                         i.value = 0
+
                     }
 
                 } else {
                     clearInterval(intervalId);
+                    isCopy.value = false;
                     i.value = 0
                 }
             }, 100);
@@ -161,7 +172,23 @@ const handleSendMessage = async () => {
         window.alert('禁止为空')
     }
 }
+const stopInterval = () => {
+    clearInterval(intervalId);
+    isCopy.value = false;
+    i.value = 0
 
+}
+const copyToClipboard = () => {
+    const textToCopy = messageText
+    navigator.clipboard.writeText(textToCopy).then(
+        function () {
+            console.log("复制成功！");
+        },
+        function () {
+            console.log("复制失败！");
+        }
+    );
+}
 const matchAllBetweenSingleQuotes = (str) => {
     const regex = /content='([^']*)'/g;
     let match;
@@ -338,13 +365,20 @@ const changeUser = (user) => {
             align-items: center;
             justify-content: center;
 
+
             .right-body {
-                background-color: white;
+
                 height: 100%;
                 width: 90%;
 
                 ::v-deep(.el-textarea__inner) {
                     height: 100%;
+                }
+
+                .btn {
+                    width: 100%;
+                    height: 40px;
+                    margin: 10px 0 0 0;
                 }
             }
         }
