@@ -1,6 +1,5 @@
 <template>
     <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" :options="config">
-
     </vue-particles>
     <div class="test">
         <div class="header">
@@ -44,10 +43,8 @@
                                 <el-button style="float: right; margin-right: 10px" type="danger" :icon="Delete"
                                     @click="handleDel(index)" circle />
                             </div>
-
                         </div>
                     </el-scrollbar>
-
                 </div>
             </div>
             <div class="center flex">
@@ -55,7 +52,6 @@
                     <el-input :disabled="isCopy" v-model="message" style="width: 100%;height: 90%;" type="textarea"
                         placeholder="Please input" />
                     <el-button :disabled="isCopy" class="btn" type="primary" @click="handleSendMessage">发送</el-button>
-
                 </div>
             </div>
             <div class="right flex">
@@ -140,48 +136,33 @@ const handleSendMessage = async () => {
             const strin = results.join('');
             console.log("strin", strin.length);
             console.log(results);
-
             console.log(results.length);
-
-
             timer = setInterval(() => {
                 console.log("11111")
-
-
                 if (strin.length > 0) {
                     i.value++
-
                     const element = strin.charAt(i.value) as never;
                     messageText += element;
                     document.getElementById('inputText').innerHTML = messageText;
-
-
                     if (i.value === strin.length - 1) {
                         clearInterval(timer);
                         isCopy.value = false;
                         i.value = 0
-
                     }
-
                 } else {
                     clearInterval(timer);
                     isCopy.value = false;
                     i.value = 0
                 }
             }, 100);
-
-
             nowUser.value.list.unshift({
                 time: new Date().toLocaleString(),
                 data: message.value,
                 require: results
             })
-
-
         } else {
             return
         }
-
     } else {
         window.alert('禁止为空')
     }
@@ -190,7 +171,6 @@ const stopInterval = () => {
     clearInterval(timer);
     isCopy.value = false;
     i.value = 0
-
 }
 const copyToClipboard = () => {
     const textToCopy = messageText
@@ -208,9 +188,7 @@ const matchAllBetweenSingleQuotes = (str) => {
     let match;
     const matches: Array = [];
     while ((match = regex.exec(str))) {
-
         matches.push(match[1].replace(/\\n/g, '\n').replace(/\n/g, ' ').replace(/-/g, '\n'))
-
     }
     return matches;
 }
@@ -240,9 +218,7 @@ const changeUser = (user) => {
     }
 }
 
-
 </script>
-
 <style scoped>
 ::v-deep(.el-textarea__inner) {
     width: 100%;
@@ -272,7 +248,6 @@ const changeUser = (user) => {
     justify-content: space-between;
     flex-direction: column;
     background-color: transparent;
-
 }
 
 .test {
@@ -292,16 +267,13 @@ const changeUser = (user) => {
         align-items: center;
 
         .header-left {
-
             height: 100%;
-
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .header-right {
-
             height: 100%;
             display: flex;
             align-items: center;
@@ -321,7 +293,6 @@ const changeUser = (user) => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-
                 height: auto;
                 margin: 10px;
                 text-align: center;
@@ -340,24 +311,14 @@ const changeUser = (user) => {
                     text-overflow: ellipsis;
                 }
             }
-
-
-
-
         }
 
         .center {
             width: calc(100% / 2);
-
-
-
-
-
         }
 
         .right {
             width: calc(100% / 4);
-
         }
     }
 }
