@@ -23,6 +23,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "@tsparticles/slim": "^3.3.0",
+    "@tsparticles/vue3": "^3.0.1",
     "axios": "^1.6.8",
     "element-plus": "^2.7.2",
     "pinia": "^2.1.7",

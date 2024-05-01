@@ -1,4 +1,7 @@
 <template>
+    <vue-particles id="tsparticles" @particles-loaded="particlesLoaded" :options="config">
+
+    </vue-particles>
     <div class="test">
         <div class="header">
             <div class="box flex" style="width: 100%;justify-content: space-between; padding: 0 20px;">
@@ -77,10 +80,13 @@ import {
     Delete,
 } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
+import { config } from "@utils/config.js";
 onMounted(() => {
     console.log(nowUser)
 })
-
+const particlesLoaded = async container => {
+    console.log("Particles container loaded", container);
+};
 const loading = ref(false)
 const store = useStore()
 const nowUser = ref(store.zhangsanData)
@@ -270,11 +276,13 @@ const changeUser = (user) => {
 }
 
 .test {
+    position: absolute;
     width: 80%;
     height: 80%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    z-index: 999;
 
     .header {
         width: 100%;
