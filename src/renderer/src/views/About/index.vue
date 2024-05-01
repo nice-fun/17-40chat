@@ -9,14 +9,23 @@
                     <span class="flex" style="margin-right: 50px;"><img style="width: 40px;height: 40px;"
                             src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" alt=""></span>
                     <span>
-                        <el-button plain @click="dialogVisible = true">
-                            {{ nowUser.username }}
+                        <el-button plain @click="dialogVisible = true" :disabled="isCopy">
+                            {{ nowUser.name }}
                         </el-button>
                         <el-dialog v-model="dialogVisible" title="更改用户" width="500" :before-close="handleClose">
-                            <span> <el-radio-group v-model="radio1" size="large">
-                                    <el-radio-button v-for="item in store.$state" :label="`${item.username}`"
-                                        :value="`${item.$id}`" />
-                                </el-radio-group></span>
+                            <span>
+                                <el-radio-group v-model="radio1" size="large" class="radio-group">
+                                    <el-radio-button v-for="item in store.userInfo.$state" :value=item.id>{{ item.name
+                                        }}</el-radio-button>
+                                    <div class="flex"
+                                        style="width: 100%; margin-top: 20px;justify-content: space-around;">
+                                        <el-input v-model="newUserInput" style="width: 240px;"
+                                            placeholder="Please input" />
+                                        <el-button type="primary" @click="addUser">新增</el-button>
+                                    </div>
+
+                                </el-radio-group>
+                            </span>
                             <template #footer>
                                 <div class="dialog-footer">
                                     <el-button @click="dialogVisible = false">Cancel</el-button>
@@ -37,7 +46,7 @@
                         <div v-for="(item, index) in nowUser.list" :key="index" class="scrollbar-demo-item">
                             <div>
                                 <div>{{ item.time }}</div>
-                                <div class="dataText">提问: &nbsp {{ item.data }}</div>
+                                <div class="dataText">提问: &nbsp {{ item.content }}</div>
                             </div>
                             <div>
                                 <el-button style="float: right; margin-right: 10px" type="danger" :icon="Delete"
@@ -79,26 +88,36 @@ import { ElMessageBox } from 'element-plus'
 import { config } from "@utils/config.js";
 onMounted(() => {
     console.log(nowUser)
+    sdafdsadf()
 })
+
+const sdafdsadf = () => {
+    const userInfo = store.userInfo
+
+    console.log("12453", userInfo.$state[0])
+
+
+}
 const particlesLoaded = async container => {
     console.log("Particles container loaded", container);
 };
+const dialogVisible = ref(false)
 const loading = ref(false)
 const store = useStore()
-const nowUser = ref(store.zhangsanData)
+const nowUser = ref(store.userInfo.$state[store.userInfo.$state.length - 1])
 const count = ref(0)
 const load = () => {
     count.value += 2
 }
 const message = ref('')
 const isDisabled = ref(false)
-const radio1 = ref('zhangsanData')
+const radio1 = ref(store.userInfo.$state.length - 1)
 const i = ref(0)
 let messageText = ''
 const isCopy = ref(false)
 let timer: NodeJS.Timeout;
 const isUneditable = ref(false)
-
+const newUserInput = ref('')
 /**
 
 const intervalId = setInterval((results) => {
@@ -112,6 +131,12 @@ const intervalId = setInterval((results) => {
  */
 
 const handleSendMessage = async () => {
+    // nowUser.value.list.unshift({
+    //     time: new Date().toLocaleString(),
+    //     content: message.value,
+
+    // })
+
     isDisabled.value = true
     isUneditable.value = true
     messageText = ''
@@ -157,8 +182,8 @@ const handleSendMessage = async () => {
             }, 100);
             nowUser.value.list.unshift({
                 time: new Date().toLocaleString(),
-                data: message.value,
-                require: results
+                content: message.value,
+
             })
         } else {
             return
@@ -195,7 +220,7 @@ const matchAllBetweenSingleQuotes = (str) => {
 const handleDel = (index) => {
     nowUser.value.list.splice(index, 1)
 }
-const dialogVisible = ref(false)
+
 
 const handleClose = (done: () => void) => {
     ElMessageBox.confirm('Are you sure to close this dialog?')
@@ -206,16 +231,32 @@ const handleClose = (done: () => void) => {
             // catch error
         })
 }
-const changeUser = (user) => {
-    if (user === 'zhangsanData') {
-        nowUser.value = store.zhangsanData
-    } else if (user === 'lisiData') {
-        nowUser.value = store.lisiData
-    } else if (user === 'wangwuData') {
-        nowUser.value = store.wangwuData
-    } else {
-        return
+const changeUser = (id) => {
+    nowUser.value = store.userInfo.$state[id]
+    console.log(id)
+
+
+
+
+}
+const addUser = () => {
+    console.log("newUserInput.value", newUserInput.value)
+    if (newUserInput.value) {
+        store.userInfo.$state.push({
+            name: newUserInput.value,
+            id: store.userInfo.$state.length,
+            list: []
+        })
+        newUserInput.value = ''
+
+        window.location.reload()
     }
+    else {
+        window.alert('禁止为空')
+    }
+
+
+
 }
 
 </script>
@@ -223,6 +264,12 @@ const changeUser = (user) => {
 ::v-deep(.el-textarea__inner) {
     width: 100%;
     height: 100%;
+}
+
+::v-deep(.radio-group) {
+    display: flex;
+    align-items: center;
+    justify-content: left;
 }
 
 .btn {
