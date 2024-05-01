@@ -46,9 +46,9 @@
                 </div>
             </div>
             <div class="center box">
-                <el-input :disabled="loading" v-model="message" style="width: 100%;height: 450px;" type="textarea"
+                <el-input :disabled="isCopy" v-model="message" style="width: 100%;height: 450px;" type="textarea"
                     placeholder="Please input" />
-                <el-button :disabled="loading" class="btn" type="primary" @click="handleSendMessage">发送</el-button>
+                <el-button :disabled="isCopy" class="btn" type="primary" @click="handleSendMessage">发送</el-button>
 
             </div>
             <div class="right box">
@@ -89,8 +89,10 @@ const isDisabled = ref(false)
 const radio1 = ref('zhangsanData')
 const i = ref(0)
 let messageText = ''
-const isCopy = ref(true)
+const isCopy = ref(false)
 let timer: NodeJS.Timeout;
+const isUneditable = ref(false)
+
 /**
 
 const intervalId = setInterval((results) => {
@@ -105,6 +107,7 @@ const intervalId = setInterval((results) => {
 
 const handleSendMessage = async () => {
     isDisabled.value = true
+    isUneditable.value = true
     messageText = ''
     document.getElementById('inputText').innerHTML = messageText;
     if (message.value !== '') {
