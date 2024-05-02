@@ -43,15 +43,20 @@
             <div class="left flex">
                 <div class="box">
                     <el-scrollbar style="width: 100%;" height="100%">
-                        <div v-for="(item, index) in nowUser.list" :key="index" class="scrollbar-demo-item">
+                        <div v-for="(item, index) in userDataList" :key="index" class="scrollbar-demo-item">
                             <div>
-                                <div>{{ item.time }}</div>
-                                <div class="dataText">提问: &nbsp {{ item.content }}</div>
+                                <div>{{ item.title }}</div>
+                                <div class="flex" v-for="(children, index) in item.list" :key="index">
+                                    <div class="dataText">提问: &nbsp {{
+                                        children.content }}
+                                    </div>
+                                    <div>
+                                        <el-button type="danger" :icon="Delete" @click="handleDel(index)" circle />
+                                    </div>
+                                </div>
+
                             </div>
-                            <div>
-                                <el-button style="float: right; margin-right: 10px" type="danger" :icon="Delete"
-                                    @click="handleDel(index)" circle />
-                            </div>
+
                         </div>
                     </el-scrollbar>
                 </div>
@@ -87,17 +92,9 @@ import {
 import { ElMessageBox } from 'element-plus'
 import { config } from "@utils/config.js";
 onMounted(() => {
-    console.log(nowUser)
-    sdafdsadf()
+    dataList(nowUser)
 })
 
-const sdafdsadf = () => {
-    const userInfo = store.userInfo
-
-    console.log("12453", userInfo.$state[0])
-
-
-}
 const particlesLoaded = async container => {
     console.log("Particles container loaded", container);
 };
@@ -105,10 +102,8 @@ const dialogVisible = ref(false)
 const loading = ref(false)
 const store = useStore()
 const nowUser = ref(store.userInfo.$state[store.userInfo.$state.length - 1])
-const count = ref(0)
-const load = () => {
-    count.value += 2
-}
+const userDataList = reactive([])
+
 const message = ref('')
 const isDisabled = ref(false)
 const radio1 = ref(store.userInfo.$state.length - 1)
@@ -129,6 +124,43 @@ const intervalId = setInterval((results) => {
     }
 }, 100); // 每隔1000毫秒执行一次
  */
+watch(nowUser, (newValue, oldValue) => {
+    console.log(`Message changed from ${oldValue.id} to ${newValue.id}`);
+    dataList(nowUser)
+});
+
+const dataList = (nowUser) => {
+    userDataList.splice(0, 2)
+    console.log("当前用户为", nowUser.value.list)
+    const todayList = { title: "今天", list: [] }
+    const historyList = { title: "历史", list: [] }
+    nowUser.value.list.forEach(element => {
+        if (isToday(element.time)) {
+            todayList.list.push({
+                content: element.content
+            })
+        } else {
+            historyList.list.push({
+                content: element.content
+            })
+        }
+    });
+    userDataList.push(todayList)
+    userDataList.push(historyList)
+    console.log("userDataList", userDataList)
+}
+
+
+
+
+const isToday = (time: string): boolean => {
+    const now = new Date();
+    const inputTime = new Date(time);
+    return now.getFullYear() === inputTime.getFullYear() &&
+        now.getMonth() === inputTime.getMonth() &&
+        now.getDate() === inputTime.getDate();
+}
+
 
 const handleSendMessage = async () => {
     // nowUser.value.list.unshift({
@@ -136,7 +168,7 @@ const handleSendMessage = async () => {
     //     content: message.value,
 
     // })
-
+    // dataList(nowUser)
     isDisabled.value = true
     isUneditable.value = true
     messageText = ''
@@ -185,6 +217,7 @@ const handleSendMessage = async () => {
                 content: message.value,
 
             })
+            dataList(nowUser)
         } else {
             return
         }
@@ -219,6 +252,7 @@ const matchAllBetweenSingleQuotes = (str) => {
 }
 const handleDel = (index) => {
     nowUser.value.list.splice(index, 1)
+    dataList(nowUser)
 }
 
 
@@ -234,10 +268,6 @@ const handleClose = (done: () => void) => {
 const changeUser = (id) => {
     nowUser.value = store.userInfo.$state[id]
     console.log(id)
-
-
-
-
 }
 const addUser = () => {
     console.log("newUserInput.value", newUserInput.value)
@@ -254,10 +284,8 @@ const addUser = () => {
     else {
         window.alert('禁止为空')
     }
-
-
-
 }
+
 
 </script>
 <style scoped>
@@ -339,9 +367,10 @@ const addUser = () => {
             .scrollbar-demo-item {
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: space-around;
                 height: auto;
                 margin: 10px;
+                padding: 0 10px;
                 text-align: center;
                 border-radius: 50px;
                 background: var(--el-color-primary-light-9);
@@ -350,6 +379,7 @@ const addUser = () => {
                 .dataText {
                     width: 100%;
                     height: 100%;
+
                     padding: 2px 10px;
                     display: -webkit-box;
                     -webkit-box-orient: vertical;
