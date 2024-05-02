@@ -43,15 +43,17 @@
             <div class="left flex">
                 <div class="box">
                     <el-scrollbar style="width: 100%;" height="100%">
-                        <div v-for="(item, index) in userDataList" :key="index" class="scrollbar-demo-item">
+                        <div v-for="(item, index) in userDataList" :key="index
+                            " class="scrollbar-demo-item">
                             <div>
                                 <div v-if="item.list.length > 0">{{ item.title }}</div>
-                                <div class="flex" v-for="(children, index) in item.list" :key="index">
+                                <div class="flex" v-for="(children, index) in item.list" :key="children.id">
                                     <div class="dataText">提问: &nbsp {{
                                         children.content }}
                                     </div>
                                     <div>
-                                        <el-button type="danger" :icon="Delete" @click="handleDel(index)" circle />
+                                        <el-button type="danger" :icon="Delete" @click="handleDel(children.id)"
+                                            circle />
                                     </div>
                                 </div>
 
@@ -91,9 +93,14 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import { config } from "@utils/config.js";
+import { nanoid } from 'nanoid';
 onMounted(() => {
     dataList(nowUser)
 })
+const idConfig = () => {
+    const id = nanoid(10)
+    return id
+}
 
 const particlesLoaded = async container => {
     console.log("Particles container loaded", container);
@@ -113,17 +120,7 @@ const isCopy = ref(false)
 let timer: NodeJS.Timeout;
 const isUneditable = ref(false)
 const newUserInput = ref('')
-/**
 
-const intervalId = setInterval((results) => {
-    if (results.length > 0) {
-        var element = results.shift(); // 从源数组中取出第一个元素
-        result.value.push(element as never); // 将元素添加到目标数组中
-    } else {
-        clearInterval(intervalId); // 如果源数组为空，则停止定时器
-    }
-}, 100); // 每隔1000毫秒执行一次
- */
 watch(nowUser, (newValue, oldValue) => {
     console.log(`Message changed from ${oldValue.id} to ${newValue.id}`);
     dataList(nowUser)
@@ -137,10 +134,12 @@ const dataList = (nowUser) => {
     nowUser.value.list.forEach(element => {
         if (isToday(element.time)) {
             todayList.list.push({
+                id: element.id,
                 content: element.content
             })
         } else {
             historyList.list.push({
+                id: element.id,
                 content: element.content
             })
         }
@@ -165,6 +164,7 @@ const isToday = (time: string): boolean => {
 const handleSendMessage = async () => {
     // nowUser.value.list.unshift({
     //     time: new Date().toLocaleString(),
+    //     id: idConfig(),
     //     content: message.value,
 
     // })
@@ -214,6 +214,7 @@ const handleSendMessage = async () => {
             }, 100);
             nowUser.value.list.unshift({
                 time: new Date().toLocaleString(),
+                id: idConfig(),
                 content: message.value,
 
             })
@@ -250,9 +251,17 @@ const matchAllBetweenSingleQuotes = (str) => {
     }
     return matches;
 }
-const handleDel = (index) => {
-    nowUser.value.list.splice(index, 1)
+const handleDel = (id) => {
+
+    nowUser.value.list.forEach((element, index) => {
+        if (element.id == id) {
+            console.log("11111", element)
+            nowUser.value.list.splice(index, 1);
+        }
+
+    });
     dataList(nowUser)
+    console.log('1222', id)
 }
 
 
