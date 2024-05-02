@@ -45,7 +45,7 @@
                     <el-scrollbar style="width: 100%;" height="100%">
                         <div v-for="(item, index) in userDataList" :key="index" class="scrollbar-demo-item">
                             <div>
-                                <div>{{ item.title }}</div>
+                                <div v-if="item.list.length > 0">{{ item.title }}</div>
                                 <div class="flex" v-for="(children, index) in item.list" :key="index">
                                     <div class="dataText">提问: &nbsp {{
                                         children.content }}
