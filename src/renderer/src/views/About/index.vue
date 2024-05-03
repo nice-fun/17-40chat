@@ -43,10 +43,11 @@
             <div class="left flex">
                 <div class="box">
                     <el-scrollbar style="width: 100%;" height="100%">
-                        <div v-for="(item, index) in userDataList" :key="index
-                            " class="scrollbar-demo-item">
+                        <div v-for="(item, index) in userDataList" :key="item.id" class="scrollbar-demo-item">
                             <div>
-                                <div v-if="item.list.length > 0">{{ item.title }}</div>
+
+                                <div>{{ isToday(item.title) ? '今天' : item.title }}</div>
+
                                 <div class="flex" v-for="(children, index) in item.list" :key="children.id">
                                     <div class="dataText">提问: &nbsp {{
                                         children.content }}
@@ -56,7 +57,6 @@
                                             circle />
                                     </div>
                                 </div>
-
                             </div>
 
                         </div>
@@ -94,17 +94,12 @@ import {
 import { ElMessageBox } from 'element-plus'
 import { config } from "@utils/config.js";
 import { nanoid } from 'nanoid';
-onMounted(() => {
-    dataList(nowUser)
-})
-const idConfig = () => {
-    const id = nanoid(10)
-    return id
-}
 
-const particlesLoaded = async container => {
-    console.log("Particles container loaded", container);
-};
+onMounted(() => {
+
+    dataListPuls(nowUser)
+})
+
 const dialogVisible = ref(false)
 const loading = ref(false)
 const store = useStore()
@@ -123,8 +118,16 @@ const newUserInput = ref('')
 
 watch(nowUser, (newValue, oldValue) => {
     console.log(`Message changed from ${oldValue.id} to ${newValue.id}`);
-    dataList(nowUser)
+    dataListPuls(nowUser)
 });
+const idConfig = () => {
+    const id = nanoid(10)
+    return id
+}
+
+const particlesLoaded = async container => {
+    console.log("Particles container loaded", container);
+};
 
 const dataList = (nowUser) => {
     userDataList.splice(0, 2)
@@ -150,7 +153,26 @@ const dataList = (nowUser) => {
 }
 
 
+const dataListPuls = (nowUser) => {
+    userDataList.splice(0, 2)
+    nowUser.value.list.forEach(element => {
+        const date = new Date(element.time);
+        const key = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        if (userDataList.indexOf(key) === -1) { userDataList.push(key) }
+    });
+    for (var i = 0; i < userDataList.length; i++) {
+        userDataList[i] = { title: userDataList[i], list: [] }
+        for (var j = 0; j < nowUser.value.list.length; j++) {
+            const date = new Date(nowUser.value.list[j].time);
+            const key = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+            if (key == userDataList[i].title) {
+                userDataList[i].list.push(nowUser.value.list[j])
+            }
+        }
+    }
 
+    console.log("userDataList", userDataList);
+}
 
 const isToday = (time: string): boolean => {
     const now = new Date();
@@ -168,7 +190,7 @@ const handleSendMessage = async () => {
     //     content: message.value,
 
     // })
-    // dataList(nowUser)
+    // dataListPuls(nowUser)
     isDisabled.value = true
     isUneditable.value = true
     messageText = ''
@@ -189,11 +211,11 @@ const handleSendMessage = async () => {
         if (res.status === 200) {
             loading.value = false
             const str = res.data;
-            const results: Array<never> = matchAllBetweenSingleQuotes(str);
-            const strin = results.join('');
+            const userDataList: Array<never> = matchAllBetweenSingleQuotes(str);
+            const strin = userDataList.join('');
             console.log("strin", strin.length);
-            console.log(results);
-            console.log(results.length);
+            console.log(userDataList);
+            console.log(userDataList.length);
             timer = setInterval(() => {
                 console.log("11111")
                 if (strin.length > 0) {
@@ -218,7 +240,7 @@ const handleSendMessage = async () => {
                 content: message.value,
 
             })
-            dataList(nowUser)
+            dataListPuls(nowUser)
         } else {
             return
         }
@@ -260,7 +282,7 @@ const handleDel = (id) => {
         }
 
     });
-    dataList(nowUser)
+    dataListPuls(nowUser)
     console.log('1222', id)
 }
 
@@ -379,7 +401,7 @@ const addUser = () => {
                 justify-content: space-around;
                 height: auto;
                 margin: 10px;
-                padding: 0 10px;
+                padding: 10px 10px;
                 text-align: center;
                 border-radius: 50px;
                 background: var(--el-color-primary-light-9);
