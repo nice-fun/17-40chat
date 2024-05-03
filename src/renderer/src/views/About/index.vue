@@ -3,13 +3,14 @@
     </vue-particles>
     <div class="test">
         <div class="header">
-            <div class="box flex" style="width: 100%;justify-content: space-between; padding: 0 20px;">
+            <div class="box flex" style="width: 100%;justify-content: space-between; padding: 0 1rem;">
                 <div class="header-left flex">AI工具</div>
                 <div class="header-right flex">
-                    <span class="flex" style="margin-right: 50px;"><img style="width: 40px;height: 40px;"
+                    <span class="flex" style="margin-right: 2rem;"><img style="width: 3rem;height: 3rem;"
                             src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" alt=""></span>
                     <span>
-                        <el-button plain @click="dialogVisible = true" :disabled="isCopy">
+                        <el-button style="width: 5rem;height: 2.5rem;" plain @click="dialogVisible = true"
+                            :disabled="isCopy">
                             {{ nowUser.name }}
                         </el-button>
                         <el-dialog v-model="dialogVisible" title="更改用户" width="500" :before-close="handleClose">
@@ -18,8 +19,8 @@
                                     <el-radio-button v-for="item in store.userInfo.$state" :value=item.id>{{ item.name
                                         }}</el-radio-button>
                                     <div class="flex"
-                                        style="width: 100%; margin-top: 20px;justify-content: space-around;">
-                                        <el-input v-model="newUserInput" style="width: 240px;"
+                                        style="width: 100%; margin-top: 1.5rem;justify-content: space-around;">
+                                        <el-input v-model="newUserInput" style="width: 15rem;"
                                             placeholder="Please input" />
                                         <el-button type="primary" @click="addUser">新增</el-button>
                                     </div>
@@ -303,8 +304,8 @@ const addUser = () => {
 
 .btn {
     width: 100%;
-    height: 40px;
-    margin: 10px 0 0 0;
+    height: 3rem;
+    margin: 1rem 0 0 0;
 }
 
 .flex {
@@ -370,10 +371,10 @@ const addUser = () => {
                 align-items: center;
                 justify-content: space-around;
                 height: auto;
-                margin: 10px;
+                margin: 1rem;
                 padding: 1rem;
                 text-align: center;
-                border-radius: 50px;
+                border-radius: 3rem;
                 background: var(--el-color-primary-light-9);
                 color: var(--el-color-primary);
 
@@ -381,7 +382,7 @@ const addUser = () => {
                     width: 100%;
                     height: 100%;
 
-                    padding: 2px 10px;
+                    padding: 0.125rem 1rem;
                     display: -webkit-box;
                     -webkit-box-orient: vertical;
                     -webkit-line-clamp: 1;
