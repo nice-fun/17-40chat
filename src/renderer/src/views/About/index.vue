@@ -23,7 +23,6 @@
                                             placeholder="Please input" />
                                         <el-button type="primary" @click="addUser">新增</el-button>
                                     </div>
-
                                 </el-radio-group>
                             </span>
                             <template #footer>
@@ -45,20 +44,17 @@
                     <el-scrollbar style="width: 100%;" height="100%">
                         <div v-for="(item, index) in userDataList" :key="item.id" class="scrollbar-demo-item">
                             <div>
-
                                 <div>{{ isToday(item.title) ? '今天' : item.title }}</div>
-
                                 <div class="flex" v-for="(children, index) in item.list" :key="children.id">
                                     <div class="dataText">提问: &nbsp {{
                                         children.content }}
                                     </div>
                                     <div>
-                                        <el-button type="danger" :icon="Delete" @click="handleDel(children.id)"
-                                            circle />
+                                        <el-button style="width: 2rem;height: 2rem;" type="danger" :icon="Delete"
+                                            @click="handleDel(children.id)" circle />
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </el-scrollbar>
                 </div>
@@ -95,17 +91,11 @@ import { ElMessageBox } from 'element-plus'
 import { config } from "@utils/config.js";
 import { nanoid } from 'nanoid';
 
-onMounted(() => {
-
-    dataListPuls(nowUser)
-})
-
 const dialogVisible = ref(false)
 const loading = ref(false)
 const store = useStore()
 const nowUser = ref(store.userInfo.$state[store.userInfo.$state.length - 1])
 const userDataList = reactive([])
-
 const message = ref('')
 const isDisabled = ref(false)
 const radio1 = ref(store.userInfo.$state.length - 1)
@@ -116,10 +106,15 @@ let timer: NodeJS.Timeout;
 const isUneditable = ref(false)
 const newUserInput = ref('')
 
+onMounted(() => {
+    dataListPuls(nowUser)
+})
+
 watch(nowUser, (newValue, oldValue) => {
     console.log(`Message changed from ${oldValue.id} to ${newValue.id}`);
     dataListPuls(nowUser)
 });
+
 const idConfig = () => {
     const id = nanoid(10)
     return id
@@ -128,30 +123,6 @@ const idConfig = () => {
 const particlesLoaded = async container => {
     console.log("Particles container loaded", container);
 };
-
-const dataList = (nowUser) => {
-    userDataList.splice(0, 2)
-    console.log("当前用户为", nowUser.value.list)
-    const todayList = { title: "今天", list: [] }
-    const historyList = { title: "历史", list: [] }
-    nowUser.value.list.forEach(element => {
-        if (isToday(element.time)) {
-            todayList.list.push({
-                id: element.id,
-                content: element.content
-            })
-        } else {
-            historyList.list.push({
-                id: element.id,
-                content: element.content
-            })
-        }
-    });
-    userDataList.push(todayList)
-    userDataList.push(historyList)
-    console.log("userDataList", userDataList)
-}
-
 
 const dataListPuls = (nowUser) => {
     userDataList.splice(0, 2)
@@ -170,7 +141,6 @@ const dataListPuls = (nowUser) => {
             }
         }
     }
-
     console.log("userDataList", userDataList);
 }
 
@@ -181,7 +151,6 @@ const isToday = (time: string): boolean => {
         now.getMonth() === inputTime.getMonth() &&
         now.getDate() === inputTime.getDate();
 }
-
 
 const handleSendMessage = async () => {
     // nowUser.value.list.unshift({
@@ -238,7 +207,6 @@ const handleSendMessage = async () => {
                 time: new Date().toLocaleString(),
                 id: idConfig(),
                 content: message.value,
-
             })
             dataListPuls(nowUser)
         } else {
@@ -248,11 +216,13 @@ const handleSendMessage = async () => {
         window.alert('禁止为空')
     }
 }
+
 const stopInterval = () => {
     clearInterval(timer);
     isCopy.value = false;
     i.value = 0
 }
+
 const copyToClipboard = () => {
     const textToCopy = messageText
     navigator.clipboard.writeText(textToCopy).then(
@@ -264,6 +234,7 @@ const copyToClipboard = () => {
         }
     );
 }
+
 const matchAllBetweenSingleQuotes = (str) => {
     const regex = /content='([^']*)'/g;
     let match;
@@ -273,8 +244,8 @@ const matchAllBetweenSingleQuotes = (str) => {
     }
     return matches;
 }
-const handleDel = (id) => {
 
+const handleDel = (id) => {
     nowUser.value.list.forEach((element, index) => {
         if (element.id == id) {
             console.log("11111", element)
@@ -286,7 +257,6 @@ const handleDel = (id) => {
     console.log('1222', id)
 }
 
-
 const handleClose = (done: () => void) => {
     ElMessageBox.confirm('Are you sure to close this dialog?')
         .then(() => {
@@ -296,10 +266,12 @@ const handleClose = (done: () => void) => {
             // catch error
         })
 }
+
 const changeUser = (id) => {
     nowUser.value = store.userInfo.$state[id]
     console.log(id)
 }
+
 const addUser = () => {
     console.log("newUserInput.value", newUserInput.value)
     if (newUserInput.value) {
@@ -316,8 +288,6 @@ const addUser = () => {
         window.alert('禁止为空')
     }
 }
-
-
 </script>
 <style scoped>
 ::v-deep(.el-textarea__inner) {
@@ -401,7 +371,7 @@ const addUser = () => {
                 justify-content: space-around;
                 height: auto;
                 margin: 10px;
-                padding: 10px 10px;
+                padding: 1rem;
                 text-align: center;
                 border-radius: 50px;
                 background: var(--el-color-primary-light-9);

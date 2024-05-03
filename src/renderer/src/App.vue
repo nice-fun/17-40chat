@@ -5,6 +5,7 @@
 import { onMounted, onBeforeUnmount } from 'vue';
 
 onMounted(() => {
+  setRem()
   window.addEventListener('resize', setRem)
 
 })
