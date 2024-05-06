@@ -126,7 +126,7 @@ const particlesLoaded = async container => {
 };
 
 const dataListPuls = (nowUser) => {
-    userDataList.splice(0, 2)
+    userDataList.splice(0, userDataList.length)
     nowUser.value.list.forEach(element => {
         const date = new Date(element.time);
         const key = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
